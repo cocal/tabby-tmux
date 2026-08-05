@@ -56,6 +56,8 @@ source tree with:
 
 A small example configuration is in example_tmux.conf.
 
+For Tabby on macOS, see contrib/tabby/ for a mouse-on + OSC 52 clipboard setup.
+
 Other documentation is available in the wiki:
 
 	https://github.com/tmux/tmux/wiki

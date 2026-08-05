@@ -3619,7 +3619,12 @@ input_add_request(struct input_ctx *ictx, enum input_request_type type, int idx)
 		tty_puts(&c->tty, s);
 		break;
 	case INPUT_REQUEST_CLIPBOARD:
-		tty_putcode_ss(&c->tty, TTYC_MS, "c", "?");
+		if (c->tty.term != NULL && tty_term_has(c->tty.term, TTYC_MS))
+			tty_putcode_ss(&c->tty, TTYC_MS, "c", "?");
+#if TMUX_TABBY
+		else
+			tty_puts(&c->tty, "\033]52;c;?\007");
+#endif
 		break;
 	case INPUT_REQUEST_QUEUE:
 		break;

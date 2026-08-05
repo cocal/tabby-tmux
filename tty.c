@@ -2125,6 +2125,27 @@ tty_cmd_setselection(struct tty *tty, const struct tty_ctx *ctx)
 	tty_set_selection(tty, ctx->sel.clip, ctx->sel.data, ctx->sel.size);
 }
 
+static int
+tty_set_selection_raw(struct tty *tty, const char *clip, const char *encoded)
+{
+#if TMUX_TABBY
+	if (clip == NULL || *clip == '\0')
+		clip = "c";
+
+	tty_puts(tty, "\033]52;");
+	tty_puts(tty, clip);
+	tty_puts(tty, ";");
+	tty_puts(tty, encoded);
+	tty_puts(tty, "\007");
+	return (1);
+#else
+	(void)tty;
+	(void)clip;
+	(void)encoded;
+	return (0);
+#endif
+}
+
 void
 tty_set_selection(struct tty *tty, const char *clip, const char *buf,
     size_t len)
@@ -2134,15 +2155,20 @@ tty_set_selection(struct tty *tty, const char *clip, const char *buf,
 
 	if (~tty->flags & TTY_STARTED)
 		return;
-	if (!tty_term_has(tty->term, TTYC_MS))
+	if (!tty_term_has(tty->term, TTYC_MS) && !TMUX_TABBY)
 		return;
+	if (clip == NULL || *clip == '\0')
+		clip = "c";
 
 	size = 4 * ((len + 2) / 3) + 1; /* storage for base64 */
 	encoded = xmalloc(size);
 
 	b64_ntop(buf, len, encoded, size);
 	tty->flags |= TTY_NOBLOCK;
-	tty_putcode_ss(tty, TTYC_MS, clip, encoded);
+	if (tty_term_has(tty->term, TTYC_MS))
+		tty_putcode_ss(tty, TTYC_MS, clip, encoded);
+	else
+		tty_set_selection_raw(tty, clip, encoded);
 
 	free(encoded);
 }
@@ -3189,7 +3215,7 @@ tty_clipboard_query(struct tty *tty)
 	struct timeval	 tv = { .tv_sec = TTY_QUERY_TIMEOUT };
 
 	if ((tty->flags & TTY_STARTED) && (~tty->flags & TTY_OSC52QUERY)) {
-		tty_putcode_ss(tty, TTYC_MS, "", "?");
+		tty_putcode_ss(tty, TTYC_MS, "c", "?");
 		tty->flags |= TTY_OSC52QUERY;
 		evtimer_add(&tty->clipboard_timer, &tv);
 	}

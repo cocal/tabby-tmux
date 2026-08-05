@@ -105,6 +105,9 @@ struct winlink;
 #ifndef TMUX_MOUSE
 #define TMUX_MOUSE 0
 #endif
+#ifndef TMUX_TABBY
+#define TMUX_TABBY 0
+#endif
 
 /* Minimum and maximum layout cell size, NOT including border lines. */
 #define PANE_MINIMUM 1

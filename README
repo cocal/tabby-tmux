@@ -6,6 +6,12 @@ screen and continue running in the background, then later reattached.
 
 This release runs on OpenBSD, FreeBSD, NetBSD, Linux, macOS and Solaris.
 
+This branch is a Tabby-focused build. It reports the version with a
+`-tabby` suffix and sends tmux copy-mode selections to Tabby's clipboard using
+OSC 52 with the `c` clipboard target. It also falls back to a raw OSC 52
+sequence when terminfo does not advertise the `Ms` clipboard capability, so no
+external helper script or special `-f` config is required.
+
 * Dependencies
 
 tmux depends on libevent 2.x, available from:

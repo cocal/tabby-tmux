@@ -54,11 +54,11 @@
 	" ''" \
 	" '#{?mouse_word,Search For #[underscore]#{=/9/...:mouse_word},}' 'C-r' {if -F '#{?#{m/r:(copy|view)-mode,#{pane_mode}},0,1}' 'copy-mode -t='; send -Xt= search-backward -- \"#{q:mouse_word}\"}" \
 	" '#{?mouse_word,Type #[underscore]#{=/9/...:mouse_word},}' 'C-y' {copy-mode -q; send-keys -l -- \"#{q:mouse_word}\"}" \
-	" '#{?mouse_word,Copy #[underscore]#{=/9/...:mouse_word},}' 'c' {copy-mode -q; set-buffer -- \"#{q:mouse_word}\"}" \
-	" '#{?mouse_line,Copy Line,}' 'l' {copy-mode -q; set-buffer -- \"#{q:mouse_line}\"}" \
+	" '#{?mouse_word,Copy #[underscore]#{=/9/...:mouse_word},}' 'c' {copy-mode -q; set-buffer -w -- \"#{q:mouse_word}\"}" \
+	" '#{?mouse_line,Copy Line,}' 'l' {copy-mode -q; set-buffer -w -- \"#{q:mouse_line}\"}" \
 	" ''" \
 	" '#{?mouse_hyperlink,Type #[underscore]#{=/9/...:mouse_hyperlink},}' 'C-h' {copy-mode -q; send-keys -l -- \"#{q:mouse_hyperlink}\"}" \
-	" '#{?mouse_hyperlink,Copy #[underscore]#{=/9/...:mouse_hyperlink},}' 'h' {copy-mode -q; set-buffer -- \"#{q:mouse_hyperlink}\"}" \
+	" '#{?mouse_hyperlink,Copy #[underscore]#{=/9/...:mouse_hyperlink},}' 'h' {copy-mode -q; set-buffer -w -- \"#{q:mouse_hyperlink}\"}" \
 	" ''" \
 	" '#{?#{!:#{pane_floating_flag}},Horizontal Split,}' 'h' {split-window -h}" \
 	" '#{?#{!:#{pane_floating_flag}},Vertical Split,}' 'v' {split-window -v}" \
@@ -351,7 +351,7 @@ key_bindings_init(void)
 {
 	static const char *const defaults[] = {
 		/* Prefix keys. */
-		"bind -N 'Send the prefix key' C-b { send-prefix }",
+		"bind -N 'Send the prefix key' C-a { send-prefix }",
 		"bind -N 'Rotate through the panes' C-o { rotate-window }",
 		"bind -N 'Suspend the current client' C-z { suspend-client }",
 		"bind -N 'Select next layout' Space { next-layout }",
@@ -360,6 +360,10 @@ key_bindings_init(void)
 		"bind -N 'List all paste buffers' '#' { list-buffers }",
 		"bind -N 'Rename current session' '$' { command-prompt -I'#S' { rename-session -- '%%' } }",
 		"bind -N 'Split window horizontally' % { split-window -h }",
+		"bind -n F11 { copy-mode }",
+		"bind -n F12 { set -g mouse; display-message 'mouse #{?mouse,ON,OFF}' }",
+		"bind -n M-c { copy-mode }",
+		"bind -n M-m { set -g mouse; display-message 'mouse #{?mouse,ON,OFF}' }",
 		"bind -N 'Kill current window' & { confirm-before -p\"kill-window #W? (y/n)\" kill-window }",
 		"bind -N 'Prompt for window index to select' \"'\" { command-prompt -T window-target -pindex { select-window -t ':%%' } }",
 		"bind -N 'New floating pane' * { new-pane }",

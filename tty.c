@@ -2148,6 +2148,8 @@ tty_set_selection(struct tty *tty, const char *clip, const char *buf,
 		return;
 	if (!tty_term_has(tty->term, TTYC_MS))
 		return;
+	if (clip == NULL || *clip == '\0')
+		clip = "c";
 
 	size = 4 * ((len + 2) / 3) + 1; /* storage for base64 */
 	encoded = xmalloc(size);
@@ -3119,7 +3121,7 @@ tty_clipboard_query(struct tty *tty)
 	struct timeval	 tv = { .tv_sec = TTY_QUERY_TIMEOUT };
 
 	if ((tty->flags & TTY_STARTED) && (~tty->flags & TTY_OSC52QUERY)) {
-		tty_putcode_ss(tty, TTYC_MS, "", "?");
+		tty_putcode_ss(tty, TTYC_MS, "c", "?");
 		tty->flags |= TTY_OSC52QUERY;
 		evtimer_add(&tty->clipboard_timer, &tv);
 	}
